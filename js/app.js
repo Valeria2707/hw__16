@@ -27,6 +27,8 @@ function showProducts(event) {
   const products = data[categoryIndex].products;
   const container = document.querySelector('.products');
   container.innerHTML = '';
+  const empty = document.querySelector('.empty');
+  empty.style.display = 'none';
 
   for (let i = 0; i < products.length; i++) {
     const elem = document.createElement('div');
@@ -202,6 +204,11 @@ function showMessage() {
   btn.setAttribute('class', 'saveBtn');
   formMain.appendChild(btn);
 
+  const errorForm = document.createElement('div');
+  errorForm.textContent = 'Заповніть всі поля!';
+  errorForm.classList.add('errorForm');
+  document.body.appendChild(errorForm);
+
   btn.addEventListener('click', saveInformation);
 }
 
@@ -237,6 +244,17 @@ function orderList() {
     itemPrice.appendChild(itemdelete);
     itemdelete.addEventListener('click', deleteOrder);
   } 
+  checkEmptyBacket();
+ }
+
+ function checkEmptyBacket(){
+  if(myOrder.length <= 0){
+    const empty = document.querySelector('.empty');
+    empty.style.display = 'block';
+    document.querySelector('.list').remove();
+    console.log('empty');
+    showCategories();
+  }
  }
 
  
@@ -264,10 +282,9 @@ function showOrder(){
   const id = event.target.getAttribute('id');
   const actualOrders = JSON.parse(localStorage.getItem('myOrder')).filter(item => item.id != id);
   myOrder = actualOrders;
-  localStorage.setItem('myOrder', JSON.stringify(myOrder))
+  localStorage.setItem('myOrder', JSON.stringify(myOrder));
   orderList()
  }
-
 
 function saveInformation() {
   const name = document.forms.formMain.name.value;
@@ -276,11 +293,13 @@ function saveInformation() {
   const storage = document.forms.formMain.storage.value;
   const count = document.forms.formMain.count.value;
   let selectedPayValidate = document.querySelector('input[name="pay"]:checked');
+  const errorForm = document.querySelector('.errorForm');
 
   if (lastname === '' || name === '' || surname === '' || storage === '' || count === '' || selectedPayValidate === null) {
-    alert("Заповніть всі поля");
+    errorForm.style.display='block';
   }
   else {
+  errorForm.remove();
   let today = new Date();
   console.log(today);
 
